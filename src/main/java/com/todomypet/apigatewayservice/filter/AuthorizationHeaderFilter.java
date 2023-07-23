@@ -1,5 +1,6 @@
 package com.todomypet.apigatewayservice.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -61,8 +62,10 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         try {
             subject = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
                     .parseClaimsJws(jwt).getBody().getSubject();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return subject;
