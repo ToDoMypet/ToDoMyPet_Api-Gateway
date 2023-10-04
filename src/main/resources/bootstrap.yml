@@ -1,0 +1,9 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: apigateway-service
+  config:
+    import: http://3.39.47.157:8888/
+    name: apigateway-service
