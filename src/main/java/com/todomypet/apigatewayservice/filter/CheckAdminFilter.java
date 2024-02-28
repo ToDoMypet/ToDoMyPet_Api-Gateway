@@ -17,6 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Component
 @Slf4j
@@ -45,6 +46,8 @@ public class CheckAdminFilter extends AbstractGatewayFilterFactory<CheckAdminFil
                 return onError(exchange, "Don't have admin permissions.", HttpStatus.FORBIDDEN);
             }
 
+            log.info(">>> permit admin account: " + LocalDateTime.now());
+
             exchange.mutate().request(request).build();
 
             return chain.filter(exchange);
@@ -65,7 +68,6 @@ public class CheckAdminFilter extends AbstractGatewayFilterFactory<CheckAdminFil
         try {
             authorization = Jwts.parser().setSigningKey(env.getProperty("token.access_token_secret"))
                     .parseClaimsJws(jwt).getBody().get("auth").toString();
-            System.out.println(authorization);
         } catch (ExpiredJwtException e) {
             log.error(">>> Expired JWT token.");
         } catch (Exception e) {
